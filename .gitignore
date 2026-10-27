@@ -1,0 +1,29 @@
+# Entorno y cache de Python
+.venv/
+__pycache__/
+*.pyc
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+DOCS PROYECTO/
+
+# Datos generados por la propia herramienta (Documento Maestro, seccion 4.1:
+# principio "ruta raiz unica"; estos artefactos SI viven dentro de esta
+# carpeta, pero no deben versionarse en el repositorio de codigo).
+aplicacion.db
+aplicacion.db-shm
+aplicacion.db-wal
+proyecto.db
+proyecto.db-shm
+proyecto.db-wal
+logs/
+proyectos/
+
+# Perfiles reales de un proyecto de negocio no se versionan junto al
+# codigo generico; el ejemplo de referencia (perfil_generico/) si.
+perfiles/*
+!perfiles/perfil_generico
+!perfiles/perfil_generico/**

@@ -1,0 +1,8 @@
+# Necesario solo para ejecutar la interfaz de escritorio (Modulo 8,
+# prototipo, python -m ui). En Linux puede requerir ademas las
+# bibliotecas nativas del sistema libegl1, libgl1, libxkbcommon0 (ver
+# README, seccion "Interfaz grafica (prototipo)" -- este entorno de
+# desarrollo sandbox no las tenia instaladas y no hay acceso a sudo;
+# se resolvio con "apt-get download" sin privilegios de root, algo que
+# no deberia ser necesario en un escritorio real).
+PySide6-Essentials>=6.5

@@ -1,0 +1,114 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ragcontentstudio"
+version = "0.1.0"
+description = "RAG Content Studio Desktop - nucleo de la Fase 1 (esqueleto)"
+requires-python = ">=3.10"
+dependencies = [
+    "SQLAlchemy>=2.0",
+    "alembic>=1.13",
+    "pydantic>=2.0",
+    "PyYAML>=6.0",
+    "pypdf>=6.14.2",  # pip-audit 2026-07-28: CVE-2026-59935/-59936/-59937/-59938, GHSA-jm82-fx9c-mx94
+    "python-docx>=1.1",
+    "openpyxl>=3.1",
+    "keyring>=24.0",
+    "cryptography>=42.0",
+    "pytesseract>=0.3.10",  # Modulo 6: OCR real via Tesseract -- app.bootstrap.abrir_proyecto() lo cablea siempre, ya no es opcional
+    "Pillow>=10.0",
+    "PyMuPDF>=1.24",  # rasterizacion de paginas PDF sin capa de texto (PdfOcrExtractor)
+    "faster-whisper>=1.0.0",  # Modulo 7: transcripcion real via Whisper local -- ver README para la restriccion de red conocida
+]
+
+[project.optional-dependencies]
+ui = ["PySide6-Essentials>=6.5"]
+# Separado de `dev` a proposito: pytest-qt importa Qt en pytest_configure()
+# para CUALQUIER ejecucion de pytest en el entorno donde este instalado,
+# no solo para tests/smoke/test_gui_*.py -- quien no vaya a tocar la GUI
+# nunca deberia necesitar Qt/EGL solo para correr `pytest tests/` (Documento
+# Maestro, seccion 4.11.1: baja friccion). Ver README, "Interfaz grafica
+# (prototipo)".
+ui-dev = ["pytest-qt>=4.4"]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.16",
+    "mypy>=1.10",
+    "bandit>=1.7",
+    "pip-audit>=2.7",
+    "pre-commit>=3.6",
+    "reportlab>=4.0",  # solo para generar PDFs de prueba (tests/unit/application)
+]
+
+[tool.setuptools.packages.find]
+include = ["app*", "application*", "domain*", "infrastructure*", "plugins*", "ui*", "workers*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# --cov* aqui (no en un flag manual) para que "pytest" solo, sin nada
+# extra que recordar, ya mida cobertura -- principio de baja friccion
+# (Documento Maestro, seccion 4.11.1).
+addopts = "--cov=app --cov=application --cov=domain --cov=infrastructure --cov=workers --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["app", "application", "domain", "infrastructure", "workers"]
+omit = ["*/migrations/*"]
+
+[tool.coverage.report]
+# Piso de cobertura, no meta: el nucleo ya arranca en ~97% (Modulos
+# 1-4); un valor mucho mas bajo dejaria pasar regresiones sin que nadie
+# se de cuenta.
+fail_under = 90
+show_missing = true
+
+# Estandar de calidad de codigo (Documento Maestro, seccion 8.3 / ADR-001,
+# seccion 12): mismo select/ignore que RAG STUDIO, por consistencia entre
+# ambas herramientas del mismo autor.
+[tool.ruff]
+target-version = "py310"
+extend-exclude = ["migrations", "build", "dist"]
+
+[tool.ruff.lint]
+select = ["E", "F", "B"]
+ignore = ["E501"]
+
+# domain/application/infrastructure/workers/ui en modo strict (ADR-001,
+# seccion 8.3 del Documento Maestro). "ui" se incorporo en la Fase 11.4
+# (bitacora): hasta entonces quedaba fuera "por ahora" -- ya no, la
+# interfaz completa (seccion 4.11) es el codigo mas nuevo y de cara al
+# usuario, no tenia sentido dejarlo sin tipado verificado.
+[tool.mypy]
+python_version = "3.10"
+files = ["app", "application", "domain", "infrastructure", "workers", "scripts", "run_app.py", "ui"]
+exclude = ["migrations"]
+ignore_missing_imports = true
+check_untyped_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+# La ruta raiz confirmada contiene un espacio ("RAG CONTENT STUDIO"):
+# sin esto, mypy falla al intentar derivar el nombre del paquete a partir
+# del nombre de la carpeta contenedora (ADR-001, seccion 12 / riesgo en
+# seccion 14). Misma correccion ya aplicada en RAG STUDIO.
+explicit_package_bases = true
+
+# Hasta la Fase 11.4 hubo aqui un override `module = "ui.*",
+# follow_imports = "skip"`: con "ui" fuera de `files`, run_app.py (que
+# importa ui.app dentro de main()) hacia que Mypy siguiera esa
+# importacion transitivamente y reportara los huecos de los stubs de
+# PySide6 que la exclusion de "ui" buscaba evitar. Ahora que "ui" esta
+# directamente en `files` (arriba), el override quedo redundante --
+# `follow_imports` solo afecta modulos alcanzados por seguimiento de
+# imports, no los listados explicitamente en `files`; se removio y se
+# confirmo (0 errores antes y despues de quitarlo) que no cambia nada.
+
+# Analisis estatico de seguridad (ADR-001, seccion 12: "seguridad,
+# licenciamiento y calidad de codigo"). Mismo alcance que Ruff/Mypy
+# (domain/application/infrastructure/workers/app); tests y migrations
+# quedan fuera porque generan datos/PDFs de prueba deliberadamente
+# "inseguros" (rutas hardcodeadas a /tmp, contenido binario simulado)
+# que no representan un riesgo real.
+[tool.bandit]
+exclude_dirs = ["tests", "migrations", "build", "dist", ".venv"]

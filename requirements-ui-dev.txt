@@ -1,0 +1,5 @@
+# Necesario solo para correr las pruebas de la interfaz grafica
+# (tests/smoke/test_gui_*.py, tests/smoke/test_splash.py) -- requiere
+# tambien requirements-ui.txt. Separado de requirements-dev.txt a
+# proposito: ver el comentario de ese archivo.
+pytest-qt>=4.4

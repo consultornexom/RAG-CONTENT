@@ -1,0 +1,47 @@
+# Automatiza Ruff + Mypy + Bandit + Pytest antes de cada commit --
+# principio de baja friccion (Documento Maestro, seccion 4.11.1): el
+# operador/desarrollador no debe recordar ejecutar cada herramienta a
+# mano, y ningun cambio que rompa una de ellas debe llegar a quedar
+# commiteado por accidente.
+#
+# Instalacion (una sola vez por clon del repositorio):
+#   pip install -e ".[dev]"
+#   pre-commit install
+repos:
+  - repo: local
+    hooks:
+      - id: ruff
+        name: Ruff (lint)
+        entry: ruff check
+        language: system
+        types: [python]
+        pass_filenames: false
+        # "ui" se agrega en la Fase 11: tabla 8.3 del Documento Maestro
+        # exige Ruff "Obligatorio" (no incremental) para la capa de
+        # interfaz grafica, a diferencia de Mypy/Bandit, que ahi siguen
+        # siendo incrementales (ver pyproject.toml, seccion 4.11.1/8.3).
+        # "scripts" tambien faltaba -- ya estaba en mypy pero nunca en
+        # este hook.
+        args: [app, application, domain, infrastructure, workers, tests, migrations, ui, scripts]
+
+      - id: mypy
+        name: Mypy (tipos)
+        entry: python3 -m mypy
+        language: system
+        pass_filenames: false
+        types: [python]
+
+      - id: bandit
+        name: Bandit (seguridad estatica)
+        entry: python3 -m bandit -q -c pyproject.toml -r
+        language: system
+        pass_filenames: false
+        types: [python]
+        args: [app, application, domain, infrastructure, workers]
+
+      - id: pytest
+        name: Pytest (unitarias + humo + cobertura)
+        entry: python3 -m pytest
+        language: system
+        pass_filenames: false
+        types: [python]

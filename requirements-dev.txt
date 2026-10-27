@@ -1,0 +1,17 @@
+# Herramientas de calidad de codigo y pruebas del nucleo (Documento
+# Maestro, seccion 8.3) -- domain/application/infrastructure/workers/app,
+# sin la interfaz grafica. La GUI (Modulo 8, PySide6) vive deliberadamente
+# aparte, en requirements-ui.txt/requirements-ui-dev.txt (mismo criterio
+# que ya usa RAG STUDIO): pytest-qt importa Qt en pytest_configure() para
+# CUALQUIER ejecucion de pytest en el entorno donde este instalado, no
+# solo para tests/smoke/test_gui_*.py -- quien no vaya a tocar la GUI
+# nunca deberia necesitar Qt/EGL solo para correr `pytest tests/`
+# (principio de baja friccion). Ver README, "Interfaz grafica (prototipo)".
+pytest>=7.0
+pytest-cov>=5.0
+ruff>=0.16
+mypy>=1.10
+bandit>=1.7
+pip-audit>=2.7
+pre-commit>=3.6
+reportlab>=4.0

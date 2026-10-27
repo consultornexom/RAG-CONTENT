@@ -1,0 +1,67 @@
+# Primer perfil de prueba (Documento Maestro, Anexo B: "Primer perfil
+# de proyecto" -- validacion real de la configurabilidad). Generico a
+# proposito: no representa a ningun agente real, solo demuestra que un
+# perfil se puede cargar, versionar y aplicar sin tocar el nucleo.
+#
+# Version inmutable -- no editar este archivo una vez publicado. Para
+# cambiar el perfil, publique perfiles/perfil_generico/0.2.yaml (Modulo
+# 2: PublicarNuevaVersionPerfil).
+id: perfil_generico
+version: "0.1"
+descripcion: >-
+  Perfil generico de referencia para probar la configurabilidad del
+  nucleo sin representar a ningun agente real.
+campos_metadato:
+  - field_id: titulo_oficial
+    nombre_visible: Titulo oficial
+    tipo_dato: texto
+    obligatorio: true
+    heredado_a_markdown: true
+  - field_id: area_propietaria
+    nombre_visible: Area propietaria
+    tipo_dato: catalogo
+    obligatorio: true
+    heredado_a_markdown: true
+    catalogo: areas
+  - field_id: fecha_emision
+    nombre_visible: Fecha de emision
+    tipo_dato: fecha
+    obligatorio: true
+    heredado_a_markdown: true
+  - field_id: nivel_confidencialidad
+    nombre_visible: Nivel de confidencialidad
+    tipo_dato: catalogo
+    obligatorio: true
+    heredado_a_markdown: true
+    catalogo: niveles_confidencialidad
+catalogos:
+  - nombre: areas
+    entradas:
+      - codigo: rh
+        etiqueta: Recursos Humanos
+      - codigo: legal
+        etiqueta: Legal
+      - codigo: operaciones
+        etiqueta: Operaciones
+  - nombre: niveles_confidencialidad
+    entradas:
+      - codigo: publico
+        etiqueta: Publico
+      - codigo: interno
+        etiqueta: Interno
+      - codigo: confidencial
+        etiqueta: Confidencial
+      - codigo: restringido
+        etiqueta: Restringido
+reglas_validacion:
+  - field_id: fecha_emision
+    tipo_regla: fecha_no_futura
+    parametros: {}
+tipos_documentales_criticos:
+  - politica
+  - reglamento
+  - procedimiento
+plantilla_markdown: null
+incidencias_criticas_permitidas: 0
+revision_obligatoria: true
+confirmacion_vigencia_obligatoria: true

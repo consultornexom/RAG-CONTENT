@@ -1,0 +1,43 @@
+SQLAlchemy>=2.0
+alembic>=1.13
+pydantic>=2.0
+PyYAML>=6.0
+pypdf>=6.14.2  # pip-audit 2026-07-28: CVE-2026-59935/-59936/-59937/-59938, GHSA-jm82-fx9c-mx94
+python-docx>=1.1
+openpyxl>=3.1
+keyring>=24.0
+cryptography>=42.0
+pytesseract>=0.3.10  # Modulo 6: OCR real via Tesseract -- app.bootstrap.abrir_proyecto() lo cablea siempre, ya no es opcional
+Pillow>=10.0
+PyMuPDF>=1.24  # rasterizacion de paginas PDF sin capa de texto (PdfOcrExtractor) y del visor dual (ui/pdf_preview.py)
+faster-whisper>=1.0.0  # Modulo 7: transcripcion real via Whisper local -- ver README para la restriccion de red conocida
+# Herramientas de calidad de codigo y pruebas del nucleo (Documento
+# Maestro, seccion 8.3) -- domain/application/infrastructure/workers/app,
+# sin la interfaz grafica. La GUI (Modulo 8, PySide6) vive deliberadamente
+# aparte, en requirements-ui.txt/requirements-ui-dev.txt (mismo criterio
+# que ya usa RAG STUDIO): pytest-qt importa Qt en pytest_configure() para
+# CUALQUIER ejecucion de pytest en el entorno donde este instalado, no
+# solo para tests/smoke/test_gui_*.py -- quien no vaya a tocar la GUI
+# nunca deberia necesitar Qt/EGL solo para correr `pytest tests/`
+# (principio de baja friccion). Ver README, "Interfaz grafica (prototipo)".
+pytest>=7.0
+pytest-cov>=5.0
+ruff>=0.16
+mypy>=1.10
+bandit>=1.7
+pip-audit>=2.7
+pre-commit>=3.6
+reportlab>=4.0
+# Necesario solo para ejecutar la interfaz de escritorio (Modulo 8,
+# prototipo, python -m ui). En Linux puede requerir ademas las
+# bibliotecas nativas del sistema libegl1, libgl1, libxkbcommon0 (ver
+# README, seccion "Interfaz grafica (prototipo)" -- este entorno de
+# desarrollo sandbox no las tenia instaladas y no hay acceso a sudo;
+# se resolvio con "apt-get download" sin privilegios de root, algo que
+# no deberia ser necesario en un escritorio real).
+PySide6-Essentials>=6.5
+# Necesario solo para correr las pruebas de la interfaz grafica
+# (tests/smoke/test_gui_*.py, tests/smoke/test_splash.py) -- requiere
+# tambien requirements-ui.txt. Separado de requirements-dev.txt a
+# proposito: ver el comentario de ese archivo.
+pytest-qt>=4.4
